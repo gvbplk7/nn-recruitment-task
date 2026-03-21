@@ -1,6 +1,6 @@
 package polak.nn.account.api.dto;
 
-import polak.nn.account.domain.model.Currency;
+import polak.nn.shared.model.Currency;
 
 import java.math.BigDecimal;
 import java.util.Map;

@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import polak.nn.account.domain.model.Account;
-import polak.nn.account.domain.model.Currency;
+import polak.nn.shared.model.Currency;
 import polak.nn.account.domain.port.AccountRepository;
 
 import java.math.BigDecimal;

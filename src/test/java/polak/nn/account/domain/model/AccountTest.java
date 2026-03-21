@@ -3,6 +3,7 @@ package polak.nn.account.domain.model;
 import org.junit.jupiter.api.Test;
 import polak.nn.account.domain.exception.InsufficientBalanceException;
 import polak.nn.account.domain.exception.SameCurrencyExchangeException;
+import polak.nn.shared.model.Currency;
 
 import java.math.BigDecimal;
 import java.util.EnumMap;

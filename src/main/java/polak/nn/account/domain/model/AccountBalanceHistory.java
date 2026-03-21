@@ -1,5 +1,7 @@
 package polak.nn.account.domain.model;
 
+import polak.nn.shared.model.Currency;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
@@ -20,5 +22,6 @@ public class AccountBalanceHistory {
     private Currency toCurrency;
     private BigDecimal toPreviousBalance;
     private BigDecimal toNewBalance;
+    private BigDecimal rate;
     private Instant changedAt;
 }

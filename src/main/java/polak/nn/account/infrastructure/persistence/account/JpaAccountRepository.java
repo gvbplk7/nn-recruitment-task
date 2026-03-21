@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import polak.nn.account.domain.model.Account;
 import polak.nn.account.domain.port.AccountRepository;
+import polak.nn.account.infrastructure.mapper.AccountEntityMapper;
 
 import java.util.Optional;
 import java.util.UUID;

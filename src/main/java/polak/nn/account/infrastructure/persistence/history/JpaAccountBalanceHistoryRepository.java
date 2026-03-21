@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import polak.nn.account.domain.model.AccountBalanceHistory;
 import polak.nn.account.domain.port.AccountBalanceHistoryRepository;
+import polak.nn.account.infrastructure.mapper.AccountBalanceHistoryEntityMapper;
 
 import java.util.List;
 import java.util.UUID;

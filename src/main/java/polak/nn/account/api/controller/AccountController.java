@@ -90,6 +90,7 @@ public class AccountController {
                 h.getToCurrency(),
                 h.getToPreviousBalance(),
                 h.getToNewBalance(),
+                h.getRate(),
                 h.getChangedAt());
     }
 }

@@ -31,6 +31,7 @@ public class BalanceChangedEventListener {
         history.setToCurrency(to.getCurrency());
         history.setToPreviousBalance(to.getPreviousBalance());
         history.setToNewBalance(to.getNewBalance());
+        history.setRate(event.rate());
         history.setChangedAt(from.getChangedAt());
         historyRepository.save(history);
     }

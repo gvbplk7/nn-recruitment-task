@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import polak.nn.account.domain.model.Account;
-import polak.nn.account.domain.model.Currency;
+import polak.nn.shared.model.Currency;
 import polak.nn.account.domain.port.AccountRepository;
 
 import java.math.BigDecimal;

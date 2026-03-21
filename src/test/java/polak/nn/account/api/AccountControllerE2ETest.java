@@ -6,10 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import polak.nn.shared.model.Currency;
+import polak.nn.exchange.infrastructure.nbp.NbpApiClient;
+
+import java.math.BigDecimal;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -22,7 +28,14 @@ class AccountControllerE2ETest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockitoBean
+    private NbpApiClient nbpApiClient;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private void stubNbpRate() {
+        when(nbpApiClient.fetchRate(Currency.USD)).thenReturn(new BigDecimal("4.0"));
+    }
 
     @Test
     void shouldCreateAccountAndReturnId() throws Exception {
@@ -115,6 +128,7 @@ class AccountControllerE2ETest {
 
     @Test
     void shouldExchangePlnToUsd() throws Exception {
+        stubNbpRate();
         MvcResult createResult = mockMvc.perform(post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -146,6 +160,7 @@ class AccountControllerE2ETest {
 
     @Test
     void shouldReturn400WhenInsufficientBalance() throws Exception {
+        stubNbpRate();
         MvcResult createResult = mockMvc.perform(post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -226,7 +241,7 @@ class AccountControllerE2ETest {
                 .content("""
                         {
                             "from": "PLN",
-                            "to": "EUR",
+                            "to": "FAKE",
                             "amount": 100.00
                         }
                         """))
@@ -235,6 +250,7 @@ class AccountControllerE2ETest {
 
     @Test
     void shouldExchangeAndThenVerifyBalanceViaGet() throws Exception {
+        stubNbpRate();
         MvcResult createResult = mockMvc.perform(post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -269,6 +285,7 @@ class AccountControllerE2ETest {
 
     @Test
     void shouldExchangeBackAndForth() throws Exception {
+        stubNbpRate();
         MvcResult createResult = mockMvc.perform(post("/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -373,6 +390,7 @@ class AccountControllerE2ETest {
 
     @Test
     void shouldReturn400ForExchangeOnNonExistentAccount() throws Exception {
+        stubNbpRate();
         mockMvc.perform(post("/api/accounts/00000000-0000-0000-0000-000000000000/exchange")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""

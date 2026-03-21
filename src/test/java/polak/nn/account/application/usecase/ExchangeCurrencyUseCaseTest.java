@@ -12,7 +12,7 @@ import polak.nn.account.domain.exception.AccountNotFoundException;
 import polak.nn.account.domain.exception.InsufficientBalanceException;
 import polak.nn.account.domain.exception.SameCurrencyExchangeException;
 import polak.nn.account.domain.model.Account;
-import polak.nn.account.domain.model.Currency;
+import polak.nn.shared.model.Currency;
 import polak.nn.account.domain.port.AccountRepository;
 import polak.nn.account.domain.port.ExchangeRateProvider;
 

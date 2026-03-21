@@ -1,5 +1,7 @@
 package polak.nn.account.domain.model;
 
+import polak.nn.shared.model.Currency;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 

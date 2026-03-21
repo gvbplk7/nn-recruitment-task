@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import polak.nn.account.domain.model.Currency;
+import polak.nn.shared.model.Currency;
 
 @Converter
 public class BalancesJsonConverter implements AttributeConverter<Map<Currency, BigDecimal>, String> {

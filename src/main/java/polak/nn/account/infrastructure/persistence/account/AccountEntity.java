@@ -16,7 +16,7 @@ import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import polak.nn.account.domain.model.Currency;
+import polak.nn.shared.model.Currency;
 
 @Entity
 @Table(name = "account")

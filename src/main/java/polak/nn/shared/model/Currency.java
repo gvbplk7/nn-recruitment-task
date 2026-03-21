@@ -1,4 +1,4 @@
-package polak.nn.account.domain.model;
+package polak.nn.shared.model;
 
 public enum Currency {
     PLN, USD

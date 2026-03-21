@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import polak.nn.account.domain.model.Currency;
+import polak.nn.shared.model.Currency;
 
 @Entity
 @Table(name = "account_balance_history", indexes = {
@@ -52,6 +52,9 @@ public class AccountBalanceHistoryEntity {
 
     @Column(name = "to_new_balance", nullable = false, precision = 19, scale = 4)
     private BigDecimal toNewBalance;
+
+    @Column(name = "rate", nullable = false, precision = 19, scale = 6)
+    private BigDecimal rate;
 
     @Column(name = "changed_at", nullable = false)
     private Instant changedAt;

@@ -32,6 +32,7 @@ dependencies {
 	implementation("org.mapstruct:mapstruct:1.6.3")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.projectlombok:lombok")

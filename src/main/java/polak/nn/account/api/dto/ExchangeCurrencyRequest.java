@@ -2,7 +2,7 @@ package polak.nn.account.api.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import polak.nn.account.domain.model.Currency;
+import polak.nn.shared.model.Currency;
 
 import java.math.BigDecimal;
 

@@ -7,9 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import polak.nn.account.application.event.BalanceChangedEvent;
 import polak.nn.account.domain.exception.AccountNotFoundException;
 import polak.nn.account.domain.exception.SameCurrencyExchangeException;
+import polak.nn.account.domain.exception.UnsupportedCurrencyPairException;
 import polak.nn.account.domain.model.Account;
 import polak.nn.account.domain.model.BalanceChange;
-import polak.nn.account.domain.model.Currency;
+import polak.nn.shared.model.Currency;
 import polak.nn.account.domain.port.AccountRepository;
 import polak.nn.account.domain.port.ExchangeRateProvider;
 
@@ -30,6 +31,9 @@ public class ExchangeCurrencyUseCase {
         if (from == to) {
             throw new SameCurrencyExchangeException(from);
         }
+        if (from != Currency.PLN && to != Currency.PLN) {
+            throw new UnsupportedCurrencyPairException(from, to);
+        }
 
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
@@ -38,7 +42,7 @@ public class ExchangeCurrencyUseCase {
         List<BalanceChange> changes = account.exchange(from, to, amount, rate);
 
         Account saved = accountRepository.save(account);
-        eventPublisher.publishEvent(new BalanceChangedEvent(accountId, changes));
+        eventPublisher.publishEvent(new BalanceChangedEvent(accountId, changes, rate));
 
         return saved;
     }

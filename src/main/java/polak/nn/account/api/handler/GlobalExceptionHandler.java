@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import polak.nn.account.api.dto.ErrorResponse;
 import polak.nn.account.domain.exception.AccountNotFoundException;
+import polak.nn.exchange.domain.exception.ExchangeRateUnavailableException;
 import polak.nn.account.domain.exception.InsufficientBalanceException;
 import polak.nn.account.domain.exception.SameCurrencyExchangeException;
+import polak.nn.account.domain.exception.UnsupportedCurrencyPairException;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -38,6 +40,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(400, ex.getMessage(), Instant.now()));
+    }
+
+    @ExceptionHandler(UnsupportedCurrencyPairException.class)
+    public ResponseEntity<ErrorResponse> handleUnsupportedCurrencyPair(UnsupportedCurrencyPairException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(400, ex.getMessage(), Instant.now()));
+    }
+
+    @ExceptionHandler(ExchangeRateUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleExchangeRateUnavailable(ExchangeRateUnavailableException ex) {
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new ErrorResponse(503, ex.getMessage(), Instant.now()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
