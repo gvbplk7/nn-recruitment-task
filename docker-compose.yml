@@ -1,0 +1,16 @@
+services:
+  account-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: account-app
+    ports:
+      - "8080:8080"
+    environment:
+      H2_DB_FILE: /app/data/account-db
+    volumes:
+      - account-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  account-data:
