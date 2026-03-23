@@ -17,6 +17,8 @@ spring:
 nbp:
   api:
     base-url: https://api.nbp.pl
+    connect-timeout-ms: 3000
+    read-timeout-ms: 5000
 
 resilience4j:
   circuitbreaker:

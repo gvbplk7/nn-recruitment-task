@@ -34,6 +34,13 @@ public class AccountEntity {
     @Column(nullable = false)
     private String lastName;
 
+    /**
+     * W środowisku produkcyjnym (np. PostgreSQL) zalecana zmiana na typ 'jsonb' z
+     * 'clob',
+     * co pozwoliłoby na indeksowanie konkretnych pól JSON-a
+     * i wydajne wyszukiwanie kont bezpośrednio po saldach konkretnych walut z
+     * poziomu SQL.
+     */
     @Convert(converter = BalancesJsonConverter.class)
     @Column(name = "balances", nullable = false, columnDefinition = "CLOB")
     private Map<Currency, BigDecimal> balances = new EnumMap<>(Currency.class);

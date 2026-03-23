@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 @Service
@@ -25,18 +26,23 @@ import java.util.concurrent.ConcurrentMap;
 public class NbpExchangeRateProvider implements ExchangeRateProvider {
 
     private static final Duration WEEKDAY_REFRESH_INTERVAL = Duration.ofHours(3);
-    private static final Duration HARD_STALE_LIMIT = Duration.ofHours(12);
+    private static final Duration HARD_STALE_LIMIT = Duration.ofHours(26);
     private static final ZoneId WARSAW = ZoneId.of("Europe/Warsaw");
 
     private final NbpApiClient nbpApiClient;
     private final ExchangeRateRepository exchangeRateRepository;
 
     private final ConcurrentMap<Currency, ExchangeRate> cache = new ConcurrentHashMap<>();
+    private final ReentrantLock refreshLock = new ReentrantLock();
 
     @Override
     public BigDecimal getRate(Currency from, Currency to) {
         if (from == Currency.PLN) {
-            return BigDecimal.ONE.divide(getPlnRate(to), 6, RoundingMode.HALF_UP);
+            BigDecimal plnRate = getPlnRate(to);
+            if (plnRate.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new ExchangeRateUnavailableException("Invalid rate received for " + to + ": " + plnRate);
+            }
+            return BigDecimal.ONE.divide(plnRate, 6, RoundingMode.HALF_UP);
         }
         return getPlnRate(from);
     }
@@ -53,16 +59,28 @@ public class NbpExchangeRateProvider implements ExchangeRateProvider {
             return cached.getRate();
         }
 
+        // if we want to have multiple currencies, we can have hashmap of locks per
+        // currency, but for now we have only 2 currencies, so one lock is enough
+        refreshLock.lock();
         try {
-            BigDecimal freshRate = nbpApiClient.fetchRate(currency);
-            log.info("Fetched rate for {} from NBP API: {}", currency, freshRate);
-            ExchangeRate exchangeRate = new ExchangeRate(currency, freshRate, now);
-            exchangeRateRepository.save(exchangeRate);
-            cache.put(currency, exchangeRate);
-            return freshRate;
-        } catch (Exception e) {
-            log.warn("Failed to fetch rate from NBP API for {}: {}", currency, e.getMessage());
-            return fallbackToCache(currency, cached, now);
+            cached = cache.get(currency);
+            if (cached != null && !needsRefresh(cached.getFetchedAt(), now)) {
+                return cached.getRate();
+            }
+
+            try {
+                BigDecimal freshRate = nbpApiClient.fetchRate(currency);
+                log.info("Fetched rate for {} from NBP API: {}", currency, freshRate);
+                ExchangeRate exchangeRate = new ExchangeRate(currency, freshRate, now);
+                exchangeRateRepository.save(exchangeRate);
+                cache.put(currency, exchangeRate);
+                return freshRate;
+            } catch (Exception e) {
+                log.warn("Failed to fetch rate from NBP API for {}: {}", currency, e.getMessage());
+                return fallbackToCache(currency, cached, now);
+            }
+        } finally {
+            refreshLock.unlock();
         }
     }
 
